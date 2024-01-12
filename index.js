@@ -5,13 +5,15 @@
 
   Baseado no site https://mondrianandme.com/
 
-  Vitor Paludetto. 2024/01/11
+  Vitor Paludetto. 2024
 **/
 
 // TODO: adicionar responsividade para permitir redimensionar sem estragar a simetria
 
 const body = document.querySelector('body');
 const parentDiv = document.querySelector('div');
+const messageWrapper = document.querySelector('.invite-wrapper');
+const btn = document.querySelector('.btn');
 
 const red = 'rgb(190, 50, 33)';
 const blue = 'rgb(34, 84, 140)';
@@ -45,6 +47,17 @@ function paintDiv() {
 }
 
 function createDiv(event) {
+  // window.addEventListener('mousemove', (event) => {
+  //   const localX = event.clientX - event.target.offsetLeft;
+  //   const localY = event.clientY - event.target.offsetTop;
+  //   console.log(localX, localY);
+  // });
+
+  // Após início da criação das divs filhas adiciona listener de evento de clique no botão de reset
+  btn.addEventListener('click', reset);
+  // Deixa mensagem inicial "invisível" quando criação da arte começa
+  messageWrapper.style.display = 'none';
+
   // event representa o elemento clicado. getBoundingClientRect() retorna posição e tamanho do elemento
   const { height, width } = event.currentTarget.getBoundingClientRect();
   const halfHeight = height / 2;
@@ -81,6 +94,17 @@ function createDiv(event) {
     // se estivermos na primeira volta do loop adicionamos o divider entre as divs
     if (i == 0) event.currentTarget.appendChild(divider);
   }
+}
+
+// Função de reset da arte. Remove listener do botão, remove todos os filhos da div pai
+// Para que a mensagem inicial seja mostrada novamente, adicionamos ela à div pai e mudamos o display pra flex.
+// Por último, readicionamos o listener de click na div pai para reiniciar a criação da arte
+function reset() {
+  btn.removeEventListener('click', reset);
+  while (parentDiv.hasChildNodes()) parentDiv.removeChild(parentDiv.lastChild);
+  parentDiv.appendChild(messageWrapper);
+  messageWrapper.style.display = 'flex';
+  parentDiv.addEventListener('click', createDiv, { once: true });
 }
 
 parentDiv.addEventListener('click', createDiv, { once: true });
